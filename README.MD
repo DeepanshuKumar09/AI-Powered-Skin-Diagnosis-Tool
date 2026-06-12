@@ -238,24 +238,9 @@ The chatbot responds according to:
 
 ---
 
-# Potential Use Cases
-
-- Medical AI research
-- AI-assisted dermatology
-- Medical imaging analysis
-- Educational healthcare systems
-- Deep learning portfolio projects
-- Internship and research demonstrations
-
----
-
 # Disclaimer
 
 This project is developed for educational and research purposes only.
-
-The predictions and AI-generated responses should not be considered professional medical advice.
-
-Always consult certified medical professionals for actual diagnosis and treatment.
 
 ---
 
