@@ -12,7 +12,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
 train_datagen = ImageDataGenerator(
-
     preprocessing_function=preprocess_input,
     rotation_range=25,
     zoom_range=0.25,
@@ -26,14 +25,12 @@ val_datagen = ImageDataGenerator(
     preprocessing_function=preprocess_input
 )
 
-# LOAD DATASET
-
+# LOADING DATASET
 train_data = train_datagen.flow_from_directory(
     'C:/Projects/Langchain_Model/Skin_Disease_Detection/datasett/train',
     target_size=(224,224),
     batch_size=32,
     class_mode='categorical'
-
 )
 
 val_data = val_datagen.flow_from_directory(
@@ -50,11 +47,9 @@ base_model = MobileNetV2(
     input_shape=(224,224,3)
 
 )
-
 base_model.trainable = False
 
 # BUILD  MODEL
-
 model = Sequential([
     base_model,
     GlobalAveragePooling2D(),
@@ -66,24 +61,19 @@ model = Sequential([
     Dense(128, activation='relu'),
     Dropout(0.2),
     Dense(7, activation='softmax')
-
 ])
 
 # COMPILE MODEL
-
 model.compile(
-
     optimizer=Adam(learning_rate=0.0001),
     loss='categorical_crossentropy',
     metrics=['accuracy']
-
 )
 
 early_stop = EarlyStopping(
     monitor='val_loss',
     patience=5,
     restore_best_weights=True
-
 )
 
 reduce_lr = ReduceLROnPlateau(
@@ -99,10 +89,7 @@ history = model.fit(
     validation_data=val_data,
     epochs=15,
     callbacks=[early_stop, reduce_lr]
-
 )
-
-
 base_model.trainable = True
 
 
@@ -110,16 +97,14 @@ base_model.trainable = True
 for layer in base_model.layers[:-50]:
     layer.trainable = False
 
-
 # RECOMPILE MODEL
 model.compile(
     optimizer=Adam(learning_rate=0.00001),
     loss='categorical_crossentropy',
     metrics=['accuracy']
-
 )
 
-# FINE TUNE MODEL
+# FINE TUNING MODEL
 history_fine = model.fit(
     train_data,
     validation_data=val_data,
@@ -127,7 +112,6 @@ history_fine = model.fit(
     callbacks=[early_stop, reduce_lr]
 
 )
-
 # SAVE MODEL
 model.save("skin_disease_model.h5")
 
