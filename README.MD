@@ -193,7 +193,7 @@ Skin_Disease_Detection/
 ## Clone Repository
 
 ```bash
-git clone <repository-link>
+git clone https://github.com/DeepanshuKumar09/AI-Powered-Skin-Diagnosis-Tool
 cd Skin_Disease_Detection
 ```
 
