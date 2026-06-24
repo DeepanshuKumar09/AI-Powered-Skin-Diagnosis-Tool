@@ -2,12 +2,10 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 import google.generativeai as genai
-#from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from PIL import Image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-from dotenv import load_dotenv
-load_dotenv()
 
+genai.configure(api_key="Enter_your_api_key")
 vision_model = genai.GenerativeModel("gemini-2.5-flash")
 
 model = tf.keras.models.load_model(
