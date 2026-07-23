@@ -7,9 +7,10 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import GlobalAveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ReduceLROnPlateau
+from tensorflow.keras.metrics import Precision, Recall
 
 train_datagen = ImageDataGenerator(
     preprocessing_function=preprocess_input,
@@ -53,7 +54,7 @@ base_model.trainable = False
 model = Sequential([
     base_model,
     GlobalAveragePooling2D(),
-    BatchNormalization(),
+    BatchNormalization(),  
     Dense(512, activation='relu'),
     Dropout(0.4),
     Dense(256, activation='relu'),
@@ -65,50 +66,51 @@ model = Sequential([
 
 # COMPILE MODEL
 model.compile(
-    optimizer=Adam(learning_rate=0.0001),
+    optimizer=RMSprop(learning_rate=0.0001),
     loss='categorical_crossentropy',
-    metrics=['accuracy']
+    metrics=['accuracy', Precision(name='precision'), Recall(name='recall')]
 )
 
 early_stop = EarlyStopping(
     monitor='val_loss',
-    patience=5,
+    patience=2,
     restore_best_weights=True
 )
 
 reduce_lr = ReduceLROnPlateau(
     monitor='val_loss',
     factor=0.2,
-    patience=2,
-    verbose=1
+    patience=3,
+    verbose=1,
+    min_lr=1e-6
 )
 
 # INITIAL TRAINING
 history = model.fit(
     train_data,
     validation_data=val_data,
-    epochs=15,
+    epochs=40,
     callbacks=[early_stop, reduce_lr]
 )
 base_model.trainable = True
 
 
 # Freeze lower layers
-for layer in base_model.layers[:-50]:
+for layer in base_model.layers[:-100]:
     layer.trainable = False
 
 # RECOMPILE MODEL
 model.compile(
-    optimizer=Adam(learning_rate=0.00001),
+    optimizer=RMSprop(learning_rate=0.0001),
     loss='categorical_crossentropy',
-    metrics=['accuracy']
+    metrics=['accuracy', Precision(name='precision'), Recall(name='recall')]
 )
 
 # FINE TUNING MODEL
 history_fine = model.fit(
     train_data,
     validation_data=val_data,
-    epochs=10,
+    epochs=40,
     callbacks=[early_stop, reduce_lr]
 
 )
